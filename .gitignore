@@ -1,0 +1,14 @@
+# Virtual machines / ISOs
+*.iso
+*.qcow2
+*.img
+*.vdi
+*.vmdk
+
+# Logs
+*.log
+
+# Local environment
+.vscode/
+.DS_Store
+Thumbs.db
