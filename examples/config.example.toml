@@ -1,0 +1,24 @@
+# Arquivo de configuração de exemplo para o Flavos Core Agent
+# Deve ser copiado para /etc/flavos/agent.toml e customizado no host.
+
+[server]
+# Endereço de escuta da API (por padrão, apenas local por motivos de segurança)
+host = "127.0.0.1"
+port = 8087
+mode = "development" # Opções: "development" ou "production"
+
+[security]
+# Restrições de segurança do MVP (Não devem ser ativadas em produção)
+allow_shell = false
+allow_package_install = false
+allow_terminal = false
+
+[services]
+# Whitelist estrita de serviços que o Agent tem permissão para controlar (start/stop/restart)
+allowed = ["nginx", "sshd", "flavos-agent"]
+
+[audit]
+# Habilitar gravação de logs de auditoria
+enabled = true
+# Caminho absoluto para o arquivo de log de auditoria
+path = "/var/log/flavos/audit.log"
