@@ -4,6 +4,41 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.3.0] — Fase 3: Agent como Serviço runit — 26/06/2026
+
+### Adicionado
+- **Runit Service Setup:**
+  - Script de inicialização do serviço `/etc/sv/flavos-agent/run` configurado com redirecionamento de logs.
+  - Ativação automática do serviço em `/var/service/flavos-agent`.
+  - Configuração do diretório `/var/log/flavos` e arquivo `/var/log/flavos/agent.log`.
+- **Validação de Boot:**
+  - Testes automatizados após reboot da VM para garantir a persistência e auto-inicialização do daemon.
+
+---
+
+## [0.2.0] — Fase 2: Flavos Core Agent MVP — 26/06/2026
+
+### Adicionado
+- **Core Agent em Go:**
+  - Criação da estrutura Go em `agent/` com os subdiretórios `cmd`, `internal/api`, `internal/metrics` e `internal/system`.
+  - Endpoint `/api/v1/health` para verificação de status do serviço.
+  - Endpoint `/api/v1/status` coletando o uptime real do `/proc/uptime` e hostname.
+  - Endpoint `/api/v1/metrics` coletando métricas reais de load average (`/proc/loadavg`), memória (`/proc/meminfo`) e disco (`syscall.Statfs`).
+  - Script e fluxo de cross-compilação para rodar na VM Void Linux (`GOOS=linux GOARCH=amd64`).
+
+---
+
+## [0.1.0] — Fase 1: Ambiente Void Linux — 26/06/2026
+
+### Adicionado
+- **VM Void Linux glibc x86_64:**
+  - Instalação básica no KVM (`flavos-os-2-void`) com layout de partição ext4 em `/dev/sda1`.
+  - Configuração de SSH com login automático por chaves e ajuste de prioridade no sudoers (`/etc/sudoers.d/zz-kaua`).
+  - Instalação de pacotes requeridos: `go`, `git`, `curl`, `nginx`, `openssh`, `socklog-void`.
+  - Criação do usuário de sistema `flavos` e da estrutura de pastas `/etc/flavos`, `/var/log/flavos`, `/opt/flavos`.
+
+---
+
 ## [0.0.0] — Fundação Inicial — 25/06/2026
 
 ### Adicionado
