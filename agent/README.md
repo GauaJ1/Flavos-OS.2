@@ -1,39 +1,64 @@
 # Flavos Core Agent
 
-Esta pasta conterá o código-fonte do **Flavos Core Agent**, desenvolvido em **Go (Golang)**. O Agent é executado como um daemon de sistema no host Void Linux, sendo responsável pelo monitoramento e controle local seguro de serviços.
+O `flavos-agent` é o núcleo do Flavos OS 2.0. É um servidor HTTP leve escrito em Go que expõe uma API REST para monitoramento e controle do sistema, acessível apenas via loopback (`127.0.0.1:8087`).
 
----
+## Estrutura
 
-## 🎯 Objetivo do Agent
+```txt
+agent/
+├── cmd/
+│   └── flavos-agent/
+│       └── main.go           # Entrypoint — inicializa o servidor HTTP
+├── internal/
+│   ├── api/
+│   │   ├── handlers.go       # Handlers dos endpoints REST
+│   │   └── router.go         # Roteamento das URLs
+│   ├── metrics/
+│   │   └── metrics.go        # Coleta de métricas do sistema
+│   └── system/
+│       └── system.go         # Leitura de /proc e syscalls
+├── bin/
+│   └── flavos-agent          # Binário compilado (gerado pelo build)
+├── go.mod
+└── go.sum
+```
 
-O Agent funciona como uma ponte segura e eficiente entre a interface web e as entranhas do sistema operacional Void Linux. Ele fornece telemetria em tempo real e expõe chamadas para gerenciamento de serviços sem a necessidade de expor credenciais root via SSH tradicional na rede.
+## Build
 
----
+```bash
+cd agent
+/usr/local/go/bin/go build -o bin/flavos-agent ./cmd/flavos-agent
+```
 
-## 🚦 Endpoints Planejados
+Cross-compile para Void Linux x86_64:
 
-- **Saúde e Status:** `/api/v1/health`, `/api/v1/status`
-- **Métricas:** `/api/v1/metrics`, `/api/v1/telemetry` (WebSocket)
-- **Gerenciamento de Serviços:** `/api/v1/services` (Listagem, Start, Stop, Restart)
-- **Logs:** `/api/v1/logs/{service}`
+```bash
+GOOS=linux GOARCH=amd64 /usr/local/go/bin/go build -o bin/flavos-agent-linux ./cmd/flavos-agent
+```
 
-Para detalhes dos payloads, consulte a [Documentação da API](../docs/API.md).
+## Execução
 
----
+```bash
+./bin/flavos-agent
+```
 
-## 📋 Escopo do MVP (Preview 0.1)
+O servidor inicia em `127.0.0.1:8087`.
 
-### O que entra no MVP:
-- **Servidor HTTP em Go** utilizando roteador nativo ou biblioteca minimalista (ex: `chi`).
-- **Middleware de Autenticação** baseado em Token estático via Header Bearer.
-- **Whitelist de Serviços** carregada via arquivo de configuração TOML.
-- **Execução controlada** dos utilitários de serviço do `runit` (`sv start`, `sv stop`, `sv restart`).
-- **Coleta de Métricas instantâneas** de CPU, Memória e Disco direto de arquivos do kernel (`/proc/stat`, `/proc/meminfo`, etc.).
-- **Log de Auditoria local** gravado via banco SQLite.
+## Endpoints disponíveis (v0.1.0)
 
-### O que NÃO entra no MVP (Pós-MVP):
-- **Terminal interativo** via navegador (Web SSH).
-- **Gerenciamento livre de processos** (matar qualquer PID).
-- **Instalação, atualização ou remoção** remota de pacotes do sistema (`xbps-install`).
-- **Gerenciamento de usuários** ou alteração de senhas do sistema hospedeiro.
-- **Configuração de firewall** ou de adaptadores de rede.
+| Método | Endpoint            | Descrição              |
+|--------|---------------------|------------------------|
+| GET    | /api/v1/health      | Health check do Agent  |
+| GET    | /api/v1/status      | Status do OS e Agent   |
+| GET    | /api/v1/metrics     | Métricas CPU/Mem/Disco |
+
+## Segurança
+
+- Bind apenas em `127.0.0.1` — sem exposição pública.
+- Autenticação será implementada na Fase 3.
+- Nenhum comando administrativo é executado nesta versão.
+
+## Fase atual
+
+**MVP — Fase 2** (monitoramento somente leitura).  
+A Fase 3 adicionará autenticação, controle de serviços e integração com runit.
