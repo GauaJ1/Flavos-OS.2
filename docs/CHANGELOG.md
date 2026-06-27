@@ -4,6 +4,23 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.6.0] — Fase 6: Logs & Auditoria — 27/06/2026
+
+### Adicionado
+- **Trilha de Auditoria Inicial (Audit Log):**
+  - Pacote `agent/internal/audit` com escrita segura via `sync.Mutex` e persistência local em JSON Lines (JSONL).
+  - Endpoint autenticado `GET /api/v1/audit` para listar os últimos eventos (com limite `?lines=` entre 1 e 200, padrão 50).
+- **Leitura de Logs de Serviço (Service Logs):**
+  - Pacote `agent/internal/logs` com mapeamento estrito de arquivos de logs de sistema para `nginx`, `sshd` e `flavos-agent`.
+  - Endpoint autenticado `GET /api/v1/logs` que lista os logs disponíveis na whitelist.
+  - Endpoint autenticado `GET /api/v1/logs/{service}` para ler as últimas linhas (com limite `?lines=` entre 1 e 200, padrão 50).
+- **Integração de Segurança:**
+  - Middleware de autenticação agora registra automaticamente falhas de token na trilha de auditoria.
+  - Execução de comandos no Service Manager agora audita todas as ações executadas e seus resultados de sucesso ou falha com justificativa.
+  - Fail-closed: o Agent encerra a execução se não for possível gravar o log de auditoria oficial no host (sem silenciar falhas).
+
+---
+
 ## [0.5.5] — Fase 5.5: Arquitetura por Edições — 27/06/2026
 
 ### Adicionado

@@ -7,6 +7,9 @@
 
 # Logs
 *.log
+audit.log
+agent/audit.log
+/var/log/flavos/*.log
 
 # Local environment
 .vscode/

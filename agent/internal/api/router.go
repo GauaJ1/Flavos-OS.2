@@ -22,6 +22,11 @@ func NewRouter() *http.ServeMux {
 	mux.Handle("/api/v1/services", auth.RequireToken(http.HandlerFunc(HandleServices)))
 	mux.Handle("/api/v1/services/", auth.RequireToken(http.HandlerFunc(HandleServiceAction)))
 
+	// Logs & Audit
+	mux.Handle("/api/v1/logs", auth.RequireToken(http.HandlerFunc(HandleLogs)))
+	mux.Handle("/api/v1/logs/", auth.RequireToken(http.HandlerFunc(HandleLogs)))
+	mux.Handle("GET /api/v1/audit", auth.RequireToken(http.HandlerFunc(HandleAudit)))
+
 	return mux
 }
 

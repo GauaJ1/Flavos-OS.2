@@ -36,7 +36,9 @@ Requisições sem token ou com token inválido recebem `401 Unauthorized`:
 | **POST** | `/api/v1/services/{name}/start` | Inicia o serviço especificado (se permitido) | Sim |
 | **POST** | `/api/v1/services/{name}/stop` | Para o serviço especificado (se permitido) | Sim |
 | **POST** | `/api/v1/services/{name}/restart` | Reinicia o serviço especificado (se permitido) | Sim |
+| **GET** | `/api/v1/logs` | Lista os serviços da whitelist que possuem logs mapeados | Sim |
 | **GET** | `/api/v1/logs/{service}` | Retorna as últimas linhas do log do serviço | Sim |
+| **GET** | `/api/v1/audit` | Retorna o registro de auditoria do sistema em formato JSON | Sim |
 | **WS** | `/api/v1/telemetry` | Canal WebSocket para fluxo contínuo de métricas | Sim |
 
 ---
@@ -172,22 +174,84 @@ Controla serviços gerenciados pelo `runit`. O nome deve estar na whitelist e a 
 ---
 
 
-### 6. `GET /api/v1/logs/{service}`
-Recupera as últimas linhas de logs do serviço do runit (utilizando o diretório padrão `/var/log/sv/{service}/current` ou similar).
+### 6. `GET /api/v1/logs`
+Retorna a lista de serviços permitidos pela whitelist que possuem arquivos de logs fisicamente mapeados e acessíveis no sistema.
 
-- **Parâmetros de Query:**
-  - `lines` (opcional, padrão: `50`): Quantidade de linhas para retornar.
+**Requer:** `X-Flavos-Token: <token>`
 
 - **Resposta (200 OK):**
   ```json
   {
-    "service": "nginx",
-    "lines_returned": 3,
-    "logs": [
-      "2026-06-25 11:59:00 [info] 127.0.0.1 - GET /index.html HTTP/1.1 200",
-      "2026-06-25 12:00:00 [info] 127.0.0.1 - GET /api/v1/health HTTP/1.1 200",
-      "2026-06-25 12:01:30 [notice] Received signal 1 (SIGHUP) - reloading configuration"
-    ]
+    "services": ["nginx", "sshd", "flavos-agent"]
+  }
+  ```
+
+---
+
+### 6.1 `GET /api/v1/logs/{service}`
+Recupera as últimas linhas de log de um serviço específico. Os caminhos físicos de logs são mapeados de forma estrita no backend.
+
+**Requer:** `X-Flavos-Token: <token>`
+
+- **Parâmetros de Query:**
+  - `lines` (opcional, padrão: `50`): Quantidade de linhas para retornar (mínimo `1`, máximo `200`).
+
+- **Resposta (200 OK):**
+  ```json
+  {
+    "lines": [
+      "2026-06-27T00:50:00Z [info] Starting Flavos Core Agent...",
+      "2026-06-27T00:50:05Z [info] Listening on 127.0.0.1:8087"
+    ],
+    "lines_returned": 2
+  }
+  ```
+
+- **Erros possíveis:**
+  - `400` com `{"error":"invalid_service_name"}` se o nome do serviço contiver caracteres inválidos.
+  - `400` com `{"error":"invalid_lines"}` se a query parameter `lines` não for um número válido entre 1 e 200.
+  - `403` com `{"error":"service_not_allowed"}` se o serviço não estiver na whitelist de serviços permitidos.
+  - `404` com `{"error":"log_not_found"}` se o arquivo de log físico do serviço não estiver mapeado ou não existir no disco.
+
+---
+
+### 6.5 `GET /api/v1/audit`
+Consulta a trilha de auditoria do sistema em formato JSON. Os eventos são registrados a cada requisição de alteração de estado ou de falha de autenticação.
+
+**Requer:** `X-Flavos-Token: <token>`
+
+- **Parâmetros de Query:**
+  - `lines` (opcional, padrão: `50`): Quantidade de linhas para retornar (mínimo `1`, máximo `200`).
+
+- **Resposta (200 OK):**
+  ```json
+  {
+    "events": [
+      {
+        "timestamp": "2026-06-27T01:14:24Z",
+        "source_ip": "127.0.0.1",
+        "method": "GET",
+        "path": "/api/v1/status",
+        "action": "authenticate",
+        "target": "",
+        "result": "failed",
+        "status_code": 401,
+        "reason": "missing_token_header",
+        "user": "anonymous"
+      },
+      {
+        "timestamp": "2026-06-27T01:14:30Z",
+        "source_ip": "127.0.0.1",
+        "method": "POST",
+        "path": "/api/v1/services/nginx/restart",
+        "action": "restart",
+        "target": "nginx",
+        "result": "success",
+        "status_code": 200,
+        "user": "static-token"
+      }
+    ],
+    "lines_returned": 2
   }
   ```
 

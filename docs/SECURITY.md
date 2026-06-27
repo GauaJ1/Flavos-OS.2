@@ -26,7 +26,7 @@ O controle de serviços é restrito a uma whitelist configurada no arquivo TOML 
 
 ### 2. Trilha de Auditoria Obrigatória (Audit Log)
 Toda e qualquer requisição que altere o estado do sistema (como `/api/v1/services/{name}/restart`) ou tentativas fracassadas de login **devem** ser auditadas.
-- O log de auditoria é gravado no arquivo SQLite local e espelhado em `/var/log/flavos/audit.log`.
+- O log de auditoria inicial é gravado localmente em `/var/log/flavos/audit.log` usando o formato JSON Lines (implementado na Fase 6 — Logs & Auditoria).
 - Cada registro deve incluir:
   - Timestamp (UTC)
   - IP de origem da requisição
@@ -112,4 +112,4 @@ A superfície de ataque e as ameaças variam de acordo com o perfil de instalaç
 
 1. **HTTPS/WSS Nativo:** Implementação de suporte a TLS nativo no servidor web do Agent Go.
 2. **Tokens Temporários (JWT/OAuth2):** Sistema de sessões com expiração automática.
-3. **Criptografia na Auditoria:** Assinatura digital dos registros de log no SQLite para garantir que os logs não foram adulterados localmente após uma intrusão.
+3. **Banco de Dados e Assinatura na Auditoria:** Persistência dos logs de auditoria em banco de dados SQLite local com assinatura digital dos registros para garantir integridade pós-intrusão.

@@ -65,6 +65,14 @@ func (m *Manager) isAllowed(name string) bool {
 	return false
 }
 
+// GetAllowedServices returns the whitelist of allowed services.
+func (m *Manager) GetAllowedServices() []string {
+	if m.cfg == nil {
+		return nil
+	}
+	return m.cfg.AllowedServices
+}
+
 // isActionPermitted returns true if the action is explicitly permitted for the service.
 func isActionPermitted(serviceName, action string) bool {
 	policy, ok := actionPolicy[serviceName]

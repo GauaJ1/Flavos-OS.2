@@ -9,10 +9,19 @@ import (
 	"strings"
 )
 
+// AuditFunc defines a callback to log authentication failures.
+type AuditFunc func(r *http.Request, statusCode int, reason string)
+
 var (
-	tokenHash [32]byte
-	hasToken  bool
+	tokenHash   [32]byte
+	hasToken    bool
+	auditLogger AuditFunc
 )
+
+// SetAuditLogger sets the callback function to log authentication events.
+func SetAuditLogger(logger AuditFunc) {
+	auditLogger = logger
+}
 
 // Init loads the token from the environment or from /etc/flavos/token.
 func Init() {
@@ -50,6 +59,9 @@ func RequireToken(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusUnauthorized)
 			_, _ = w.Write([]byte(`{"error": "unauthorized"}`))
+			if auditLogger != nil {
+				auditLogger(r, http.StatusUnauthorized, "no_token_configured")
+			}
 			return
 		}
 
@@ -58,6 +70,9 @@ func RequireToken(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusUnauthorized)
 			_, _ = w.Write([]byte(`{"error": "unauthorized"}`))
+			if auditLogger != nil {
+				auditLogger(r, http.StatusUnauthorized, "missing_token_header")
+			}
 			return
 		}
 
@@ -70,6 +85,9 @@ func RequireToken(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusUnauthorized)
 			_, _ = w.Write([]byte(`{"error": "unauthorized"}`))
+			if auditLogger != nil {
+				auditLogger(r, http.StatusUnauthorized, "invalid_token")
+			}
 		}
 	})
 }
