@@ -44,21 +44,45 @@ GOOS=linux GOARCH=amd64 /usr/local/go/bin/go build -o bin/flavos-agent-linux ./c
 
 O servidor inicia em `127.0.0.1:8087`.
 
-## Endpoints disponíveis (v0.1.0)
+## Autenticação
 
-| Método | Endpoint            | Descrição              |
-|--------|---------------------|------------------------|
-| GET    | /api/v1/health      | Health check do Agent  |
-| GET    | /api/v1/status      | Status do OS e Agent   |
-| GET    | /api/v1/metrics     | Métricas CPU/Mem/Disco |
+Os endpoints `/api/v1/status` e `/api/v1/metrics` exigem autenticação via header HTTP customizado:
+
+```http
+X-Flavos-Token: <seu_token_aqui>
+```
+
+O token é carregado na ordem:
+1. Variável de ambiente `FLAVOS_TOKEN` (desenvolvimento)
+2. Arquivo `/etc/flavos/token` (produção/VM)
+
+O arquivo de token deve ter permissões `600` e dono `root:root`.
+
+Requisições sem token ou com token inválido recebem:
+```json
+{"error": "unauthorized"}
+```
+
+O endpoint `/api/v1/health` é **público** e não requer autenticação.
+
+## Endpoints disponíveis (v0.1.0 — Fase 4)
+
+| Método | Endpoint            | Descrição              | Auth? |
+|--------|---------------------|------------------------|-------|
+| GET    | /api/v1/health      | Health check do Agent  | Não   |
+| GET    | /api/v1/status      | Status do OS e Agent   | Sim   |
+| GET    | /api/v1/metrics     | Métricas CPU/Mem/Disco | Sim   |
 
 ## Segurança
 
 - Bind apenas em `127.0.0.1` — sem exposição pública.
-- Autenticação será implementada na Fase 3.
-- Nenhum comando administrativo é executado nesta versão.
+- Token lido de arquivo com `strings.TrimSpace` para eliminar `\n` indesejado.
+- Comparação de token via `crypto/subtle.ConstantTimeCompare` + `sha256.Sum256` — resistente a timing attacks.
+- Token jamais registrado em logs, código-fonte ou relatórios.
+- Erros de autenticação retornam `{"error": "unauthorized"}` sem detalhes internos.
 
 ## Fase atual
 
-**MVP — Fase 2** (monitoramento somente leitura).  
-A Fase 3 adicionará autenticação, controle de serviços e integração com runit.
+**Fase 4 — Autenticação Inicial** concluída.  
+A Fase 5 adicionará controle de serviços runit via API autenticada.
+

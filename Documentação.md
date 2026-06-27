@@ -1,6 +1,6 @@
 # Flavos OS 2.0 — Documentação de Projeto
 
-**Status:** 🟢 Fase 3 Concluída
+**Status:** 🟢 Fase 4 Concluída
 **Início:** 25/06/2026
 **Prazo alvo:** 01/08/2026
 **Projeto:** Projeto Férias

@@ -39,10 +39,13 @@ Toda e qualquer requisição que altere o estado do sistema (como `/api/v1/servi
 
 ## 🔑 Autenticação e Autorização
 
-- **Modelo Inicial:** Utilização de um Token de Acesso Estático (Bearer Token) de alta entropia.
-- **Armazenamento:** O token é armazenado de forma segura no host no arquivo `/etc/flavos/agent.toml` (com permissões restritas `chown root:root` e `chmod 600`).
-- **Validação de Token:** O token deve ser fornecido no cabeçalho `Authorization: Bearer <token>`. Requisições sem token válido retornam **HTTP 401 Unauthorized** sem expor detalhes sobre o sistema.
-- **Tratamento de Erros:** Mensagens de erro da API nunca devem vazar stack traces do Go, caminhos absolutos do código-fonte ou detalhes internos de infraestrutura. Os erros devem ser formatados e padronizados.
+- **Modelo Atual (Fase 4):** Token estático de alta entropia gerado com `openssl rand -hex 32`.
+- **Cabeçalho:** `X-Flavos-Token: <token>` — cabeçalho HTTP customizado.
+- **Armazenamento:** `/etc/flavos/token` com `chmod 600` e `chown root:root`. Em desenvolvimento, a variável de ambiente `FLAVOS_TOKEN` tem prioridade.
+- **Comparação Segura:** O token é comparado usando `crypto/subtle.ConstantTimeCompare` após hash SHA-256 de ambos os lados, prevenindo timing attacks.
+- **TrimSpace obrigatório:** O arquivo de token recebe `strings.TrimSpace` ao ser lido, eliminando falha por `\n` no final.
+- **Endpoints protegidos:** `/api/v1/status` e `/api/v1/metrics` exigem token válido. `/api/v1/health` é público.
+- **Tratamento de Erros:** Requisições sem token válido retornam `401 Unauthorized` com corpo `{"error": "unauthorized"}` — sem stack traces, caminhos internos ou detalhes de infraestrutura.
 
 ---
 

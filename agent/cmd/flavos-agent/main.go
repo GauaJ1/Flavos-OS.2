@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"flavos-os-2/agent/internal/api"
+	"flavos-os-2/agent/internal/auth"
 )
 
 const (
@@ -16,6 +17,9 @@ const (
 )
 
 func main() {
+	// Initialize authentication token
+	auth.Init()
+
 	router := api.NewRouter()
 
 	fmt.Printf("Flavos Core Agent v%s\n", version)

@@ -4,6 +4,21 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.4.0] — Fase 4: Autenticação Inicial do Flavos Core Agent — 27/06/2026
+
+### Adicionado
+- **Módulo de Autenticação (`agent/internal/auth`):**
+  - Carregamento de token estático a partir de `FLAVOS_TOKEN` (env) ou `/etc/flavos/token` (arquivo).
+  - `strings.TrimSpace` aplicado ao leitura de arquivo para eliminar falhas por `\n`.
+  - Comparação segura com `crypto/subtle.ConstantTimeCompare` após `sha256.Sum256`, prevenindo timing attacks.
+  - Middleware HTTP `RequireToken` que retorna `401 Unauthorized` com `{"error": "unauthorized"}` se o token for ausente ou inválido.
+- **Rotas protegidas:** `/api/v1/status` e `/api/v1/metrics` agora exigem `X-Flavos-Token` válido.
+- **Rota pública:** `/api/v1/health` permanece acessível sem autenticação.
+- **Token na VM:** `/etc/flavos/token` com `chmod 600` e `chown root:root`.
+- **Documentação:** `PHASE-4-AUTH-REPORT.md`, `API.md`, `SECURITY.md` e `agent/README.md` atualizados.
+
+---
+
 ## [0.3.0] — Fase 3: Agent como Serviço runit — 26/06/2026
 
 ### Adicionado

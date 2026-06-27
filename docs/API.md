@@ -8,9 +8,19 @@ Todas as requisições, exceto `/api/v1/health`, exigem autenticação via Beare
 ---
 
 ## 🔒 Autenticação
-A API utiliza autenticação simples via cabeçalho HTTP:
+
+A API utiliza autenticação via cabeçalho HTTP customizado:
+
 ```http
-Authorization: Bearer <seu_token_aqui>
+X-Flavos-Token: <seu_token_aqui>
+```
+
+O token é configurado na VM em `/etc/flavos/token` (permissão `600`, dono `root:root`) ou via variável de ambiente `FLAVOS_TOKEN` em desenvolvimento.
+
+Requisições sem token ou com token inválido recebem `401 Unauthorized`:
+
+```json
+{"error": "unauthorized"}
 ```
 
 ---
