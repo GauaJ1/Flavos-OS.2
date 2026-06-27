@@ -3,8 +3,7 @@
 Esta é a documentação inicial da API HTTP REST e do WebSocket do **Flavos Core Agent**. 
 A API escuta por padrão na porta `8087` no endereço local (`127.0.0.1`) durante o desenvolvimento.
 
-Todas as requisições, exceto `/api/v1/health`, exigem autenticação via Bearer Token.
-
+Todas as requisições, exceto `/api/v1/health`, exigem autenticação via header `X-Flavos-Token`.
 ---
 
 ## 🔒 Autenticação
