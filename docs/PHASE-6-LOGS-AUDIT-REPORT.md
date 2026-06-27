@@ -71,9 +71,9 @@ Testando GET /logs (com token: invalid-token-xyz) ✅ OK (Status: 401)
    Response: {"error": "unauthorized"}
 Testando GET /audit (com token: invalid-token-xyz) ✅ OK (Status: 401)
    Response: {"error": "unauthorized"}
-Testando GET /status (com token: bdee5d4069...) ✅ OK (Status: 200)
-Testando GET /metrics (com token: bdee5d4069...) ✅ OK (Status: 200)
-Testando GET /services (com token: bdee5d4069...) ✅ OK (Status: 200)
+Testando GET /status (com token: [token ocultado]) ✅ OK (Status: 200)
+Testando GET /metrics (com token: [token ocultado]) ✅ OK (Status: 200)
+Testando GET /services (com token: [token ocultado]) ✅ OK (Status: 200)
 Testando GET /audit ✅ OK
 --- Conteudo do Log de Auditoria ---
 {
@@ -99,10 +99,22 @@ Testando GET /logs ✅ OK
 --- Conteudo da Listagem de Logs ---
 {"services":["nginx","sshd","flavos-agent"]}
 ------------------------------------
-Testando GET /logs/nonexistent-service (com token: bdee5d4069...) ✅ OK (Status: 403)
+Testando GET /logs/nonexistent-service (com token: [token ocultado]) ✅ OK (Status: 403)
    Response: {"error":"service_not_allowed"}
 === Todos os testes do script passaram com sucesso! ===
 ```
+
+---
+
+## 🔄 Teste Pós-Reboot
+
+Após reboot da VM, o serviço `flavos-agent` iniciou automaticamente via runit, carregou a configuração, preservou o acesso ao audit log e respondeu corretamente aos endpoints `/api/v1/health`, `/api/v1/audit` e `/api/v1/logs`.
+
+- Serviço `flavos-agent` ativo via `sv status flavos-agent` ✅
+- Serviço `nginx` ativo via `sv status nginx` ✅
+- `GET /api/v1/health` ➔ HTTP 200 OK ✅
+- `GET /api/v1/audit` (com token) ➔ HTTP 200 OK ✅
+- `GET /api/v1/logs` (com token) ➔ HTTP 200 OK ✅
 
 ---
 

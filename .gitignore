@@ -18,3 +18,8 @@ Thumbs.db
 
 # Go build output
 agent/bin/
+
+# Dashboard build and dependencies
+dashboard/node_modules/
+dashboard/dist/
+dashboard/tsconfig.tsbuildinfo

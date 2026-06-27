@@ -4,6 +4,36 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.7.0] — Fase 7: Flavos Web Console MVP — 27/06/2026
+
+### Adicionado
+- Projeto `dashboard/` com Vite 8.1, React 18.3 e TypeScript 5.5.
+- Login local por token usando `sessionStorage` (chave `flavos_token`).
+- API client com header `X-Flavos-Token`, timeout de 8s e tratamento de `AuthError`.
+- Dashboard visual com cards de status, métricas, contagem de serviços e últimos eventos de auditoria.
+- Services Page com lista de serviços, ações seguras e diálogo de confirmação antes de start/stop/restart.
+- Logs Page com seletor de serviço e quantidade de linhas (20, 50, 100, 200).
+- Audit Page com tabela, filtro por resultado e mascaramento visual de strings hex longas.
+- Settings/About Page com informações do Core, botões de logout e aviso de segurança.
+- Estados de loading, error e empty em todas as telas.
+- Design system dark premium em CSS puro (Inter + JetBrains Mono).
+- Build estático via `npm run build` (Vite, 32 módulos, 163KB JS).
+- Deploy do Web Console em `/var/www/flavos-console` via Nginx na VM.
+- Configuração do Nginx com proxy `/api/` para `127.0.0.1:8087`.
+
+### Segurança
+- Token não é hardcoded e não é enviado via query string.
+- Token não é salvo em `localStorage` (usa `sessionStorage`).
+- Endpoints protegidos continuam exigindo `X-Flavos-Token`.
+- Agent permanece bindado em `127.0.0.1:8087` sem alteração.
+- `npm audit` → 0 vulnerabilidades.
+
+### Corrigido (Fase 6 — pré-Fase 7)
+- Prefixos de token nos testes da Fase 6 substituídos por `[token ocultado]`.
+- Seção de pós-reboot adicionada ao `PHASE-6-LOGS-AUDIT-REPORT.md`.
+
+---
+
 ## [0.6.0] — Fase 6: Logs & Auditoria — 27/06/2026
 
 ### Adicionado

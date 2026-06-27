@@ -1,6 +1,6 @@
 # Flavos OS 2.0 — Documentação de Projeto
 
-**Status:** 🟢 Fase 5 Concluída
+**Status:** 🟢 Fase 7 Concluída
 **Início:** 25/06/2026
 **Prazo alvo:** 01/08/2026
 **Projeto:** Projeto Férias
@@ -686,7 +686,7 @@ Release Candidate 1.0
 
 ## Fase 0 — Fundação do Projeto
 
-**Status:** Para fazer hoje
+**Status:** Concluída
 **Duração estimada:** 25/06 a 26/06
 **Objetivo:** organizar a base do projeto antes de programar pesado.
 
@@ -726,7 +726,7 @@ scripts/
 
 ## Fase 1 — Base Void Linux + Ambiente
 
-**Status:** Para fazer hoje
+**Status:** Concluída
 **Duração estimada:** 26/06
 **Objetivo:** preparar o ambiente onde o Agent vai rodar.
 
@@ -784,7 +784,7 @@ A Fase 1 estará concluída quando:
 
 ## Fase 2 — Flavos Core Agent MVP
 
-**Status:** Próxima fase
+**Status:** Concluída
 **Duração sugerida:** 27/06 a 30/06
 **Objetivo:** criar o primeiro Agent funcional em Go.
 
@@ -826,7 +826,7 @@ retornar um JSON válido com status do sistema.
 
 ## Fase 3 — Agent como Serviço runit
 
-**Status:** Planejada
+**Status:** Concluída
 **Duração sugerida:** 01/07 a 03/07
 **Objetivo:** fazer o Agent iniciar automaticamente com o sistema.
 
@@ -851,7 +851,7 @@ A Fase 3 estará concluída quando o comando de status do serviço mostrar o Age
 
 ## Fase 4 — Service Manager
 
-**Status:** Planejada
+**Status:** Concluída
 **Duração sugerida:** 04/07 a 08/07
 **Objetivo:** permitir controle limitado de serviços.
 
@@ -886,7 +886,7 @@ A Fase 4 estará concluída quando for possível reiniciar um serviço permitido
 
 ## Fase 5 — Logs & Audit
 
-**Status:** Planejada
+**Status:** Concluída
 **Duração sugerida:** 09/07 a 12/07
 **Objetivo:** adicionar visibilidade e rastreabilidade.
 
@@ -918,7 +918,7 @@ A Fase 5 estará concluída quando ações como restart, login e erro de permiss
 
 ## Fase 6 — Autenticação Inicial
 
-**Status:** Planejada
+**Status:** Concluída
 **Duração sugerida:** 13/07 a 16/07
 **Objetivo:** proteger a API.
 
@@ -951,7 +951,7 @@ A Fase 6 estará concluída quando uma requisição sem token retornar erro 401.
 
 ## Fase 7 — Flavos Web Console MVP
 
-**Status:** Planejada
+**Status:** Concluída
 **Duração sugerida:** 17/07 a 22/07
 **Objetivo:** criar o painel visual inicial.
 
