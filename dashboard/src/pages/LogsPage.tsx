@@ -1,10 +1,12 @@
-// LogsPage — read service logs
 import { useState, useEffect, useCallback } from 'react'
 import { fetchLogsList, fetchLogs } from '../api/client'
-import { Card } from '../components/Card'
 import { LoadingState, EmptyState } from '../components/LoadingState'
 import { AuthError, ApiError } from '../types'
 import { maskSensitiveStrings } from '../utils/security'
+import { Card, Select, Button, Space, Alert, Typography, Tag } from 'antd'
+import { ReloadOutlined, FileTextOutlined, ConsoleSqlOutlined } from '@ant-design/icons'
+
+const { Text } = Typography
 
 interface LogsPageProps {
   onUnauthorized: () => void
@@ -69,52 +71,99 @@ export function LogsPage({ onUnauthorized, refreshKey }: LogsPageProps) {
   if (loadingList) return <LoadingState message="Loading log services…" />
 
   return (
-    <div className="page">
+    <div className="page-content">
+      {/* Page header */}
       <div className="page-header">
-        <h2 className="page-title">Logs</h2>
-        <button id="logs-refresh" className="btn btn-icon" onClick={loadLogs} title="Refresh">↻</button>
+        <div className="page-title-group">
+          <FileTextOutlined className="page-title-icon" />
+          <h2 className="page-title">Logs</h2>
+        </div>
+        <Button
+          id="logs-refresh"
+          type="text"
+          icon={<ReloadOutlined />}
+          onClick={loadLogs}
+          loading={loadingLogs}
+          style={{ color: 'var(--text-muted)' }}
+        />
       </div>
 
-      <Card className="mb-4">
-        <div className="logs-controls">
-          <div className="form-group-inline">
-            <label htmlFor="logs-service-select" className="form-label">Service</label>
-            <select
+      {/* Controls card */}
+      <Card
+        bordered={false}
+        styles={{ body: { padding: '14px 20px' } }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+          <Space align="center" size={10}>
+            <Text style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+              Service
+            </Text>
+            <Select
               id="logs-service-select"
-              className="form-select"
               value={selectedService}
-              onChange={e => setSelectedService(e.target.value)}
-            >
-              {serviceList.map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group-inline">
-            <label htmlFor="logs-lines-select" className="form-label">Lines</label>
-            <select
+              onChange={val => setSelectedService(val)}
+              style={{ minWidth: 180 }}
+              options={serviceList.map(s => ({ value: s, label: s }))}
+            />
+          </Space>
+
+          <Space align="center" size={10}>
+            <Text style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+              Lines
+            </Text>
+            <Select
               id="logs-lines-select"
-              className="form-select"
               value={lines}
-              onChange={e => setLines(Number(e.target.value))}
-            >
-              {LINE_OPTIONS.map(n => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
+              onChange={val => setLines(val)}
+              style={{ minWidth: 100 }}
+              options={LINE_OPTIONS.map(n => ({ value: n, label: String(n) }))}
+            />
+          </Space>
         </div>
       </Card>
 
-      {error && <div className="alert alert-danger mb-4" role="alert">{error}</div>}
+      {/* Error */}
+      {error && (
+        <Alert
+          message={error}
+          type="error"
+          showIcon
+          style={{ borderRadius: 10 }}
+        />
+      )}
 
+      {/* Terminal */}
       {loadingLogs ? (
         <LoadingState message={`Loading logs for ${selectedService}…`} />
       ) : logLines.length === 0 ? (
         <EmptyState message="No log lines to display." />
       ) : (
-        <Card title={`${selectedService} — last ${logLines.length} lines`}>
-          <pre className="log-output" aria-label={`Logs for ${selectedService}`}>
+        <Card
+          bordered={false}
+          title={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ConsoleSqlOutlined style={{ color: 'var(--accent-primary)', fontSize: 13 }} />
+              <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)' }}>
+                {selectedService}
+              </span>
+              <Tag
+                style={{
+                  background: 'var(--accent-glow-soft)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-muted)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 10,
+                }}
+              >
+                {logLines.length} lines
+              </Tag>
+            </div>
+          }
+        >
+          <pre
+            className="log-terminal"
+            aria-label={`Logs for ${selectedService}`}
+          >
             {logLines.join('\n')}
           </pre>
         </Card>

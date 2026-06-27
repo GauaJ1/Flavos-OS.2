@@ -1,5 +1,5 @@
-// App.tsx — root component with routing
 import { useState, useCallback, useEffect } from 'react'
+import { Layout } from 'antd'
 import { hasToken, clearToken } from './utils/security'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
@@ -11,6 +11,8 @@ import { Sidebar } from './components/Sidebar'
 import { Header } from './components/Header'
 import type { Page } from './types'
 import { fetchStatus } from './api/client'
+
+const { Content } = Layout
 
 function App() {
   const [authenticated, setAuthenticated] = useState(hasToken)
@@ -42,7 +44,6 @@ function App() {
     setRefreshKey(k => k + 1)
   }, [])
 
-  // Load hostname/status for the header
   useEffect(() => {
     if (!authenticated) return
     fetchStatus()
@@ -63,28 +64,34 @@ function App() {
     const props = { onUnauthorized: handleUnauthorized, refreshKey }
     switch (currentPage) {
       case 'dashboard': return <DashboardPage {...props} />
-      case 'services': return <ServicesPage {...props} />
-      case 'logs': return <LogsPage {...props} />
-      case 'audit': return <AuditPage {...props} />
-      case 'settings': return <SettingsPage onLogout={handleLogout} onUnauthorized={handleUnauthorized} />
+      case 'services':  return <ServicesPage {...props} />
+      case 'logs':      return <LogsPage {...props} />
+      case 'audit':     return <AuditPage {...props} />
+      case 'settings':  return <SettingsPage onLogout={handleLogout} onUnauthorized={handleUnauthorized} />
     }
   }
 
   return (
-    <div className="app-layout">
+    <Layout style={{ minHeight: '100vh' }}>
       <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
-      <div className="app-main">
+      <Layout>
         <Header
           hostname={hostname}
           agentStatus={agentStatus}
+          currentPage={currentPage}
           onLogout={handleLogout}
           onRefresh={handleRefresh}
         />
-        <main className="app-content">
+        <Content
+          style={{
+            overflowY: 'auto',
+            background: 'var(--bg-main)',
+          }}
+        >
           {renderPage()}
-        </main>
-      </div>
-    </div>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }
 
