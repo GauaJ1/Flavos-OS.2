@@ -8,19 +8,21 @@
 **Base:** Void Linux glibc x86_64
 **Predecessor:** Flavos OS 0.1 Preview, descontinuado
 **Categoria:** Projeto de portfólio · Flavos Company
-**Tipo:** Cloud OS Headless · VPS Control Panel · API-first OS
+**Tipo:** Flavos OS Core · Cloud OS · Desktop/Legacy-ready · API-first OS
+
+**Edições planejadas:** Cloud Edition · Desktop Edition · Legacy Edition
+**Edição atual em desenvolvimento:** Cloud Edition
+**Núcleo comum:** Flavos OS Core
 
 ---
 
 # 1. Visão Geral
 
-O **Flavos OS 2.0** é um sistema operacional headless para nuvem, focado em transformar uma VPS em um ambiente privado, monitorável e controlável via Web Dashboard, API REST e WebSockets.
+O **Flavos OS 2.0** é um sistema baseado em Void Linux, construído em torno de um núcleo próprio chamado **Flavos OS Core**.
 
-Diferente do Flavos OS 0.1 Preview, que tinha foco mais experimental em interface e sistema próprio, o Flavos OS 2.0 nasce com uma proposta mais realista, útil e aplicável:
+O Flavos OS Core adiciona ao Void Linux uma camada própria de controle, telemetria, autenticação, gerenciamento de serviços e integração futura com painel web.
 
-> Criar uma camada inteligente de controle sobre uma VPS Linux, permitindo gerenciar serviços, telemetria, logs, pacotes, containers e automações através de um painel web seguro.
-
-O projeto não pretende substituir distribuições Linux completas. Ele usa uma base minimalista, estável e controlável, adicionando uma camada própria chamada **Flavos Core Agent**.
+A primeira edição em desenvolvimento é a **Flavos OS 2.0 Cloud Edition**, focada em VPS, servidores e ambientes headless. Futuramente, o mesmo Core será usado em edições visuais para uso pessoal, como a **Desktop Edition** e a **Legacy Edition**.
 
 ---
 
@@ -41,18 +43,31 @@ Criar um ambiente de nuvem privada controlável por navegador, onde o usuário p
 
 # 3. Conceito Oficial
 
-## Nome
+## Nome do sistema
+
+**Flavos OS 2.0**
+
+## Núcleo comum
+
+**Flavos OS Core**
+
+## Edição atual
 
 **Flavos OS 2.0 Cloud Edition**
 
 ## Frase oficial
 
-> Flavos OS 2.0 é um Cloud OS headless baseado em Void Linux, projetado para transformar uma VPS em um ambiente privado, controlável por API, painel web e automações inteligentes.
+> Flavos OS 2.0 é um sistema baseado em Void Linux com um núcleo próprio chamado Flavos OS Core, projetado para funcionar em perfis cloud, desktop e legacy, mantendo uma camada comum de Agent, API, controle de serviços, telemetria e Web Console.
+
+> A Cloud Edition é o perfil headless do Flavos OS 2.0, voltado para VPS, servidores e ambientes controláveis por API, SSH e painel web.
 
 ## Posicionamento
 
-O Flavos OS 2.0 não é um desktop Linux tradicional.
-Ele é uma camada de controle remoto para servidores.
+O Flavos OS 2.0 não deve ser entendido apenas como uma distribuição desktop nem apenas como um painel de VPS. Ele é uma base de sistema modular sobre Void Linux.
+
+A Cloud Edition usa esse núcleo em modo headless.
+A Desktop Edition usará esse núcleo com interface gráfica moderna.
+A Legacy Edition usará esse núcleo com interface gráfica leve para computadores antigos.
 
 Ele funciona como:
 
@@ -76,7 +91,7 @@ Ele funciona como:
 | Controle     | Local                          | Remoto via API                    |
 | Público-alvo | Experimento técnico            | Portfólio, VPS, automação         |
 | Complexidade | Alta demais                    | Modular e evolutiva               |
-| Objetivo     | Criar um OS                    | Controlar uma VPS como OS próprio |
+| Objetivo     | Criar um OS                    | Criar um sistema Flavos modular sobre Void Linux, começando pela Cloud Edition |
 
 ---
 
@@ -95,6 +110,29 @@ A arquitetura do Flavos OS 2.0 é dividida em três camadas principais:
               ▼
 [ Camada 1: Void Linux Base ]
 ```
+
+---
+
+# 5.1 Arquitetura por Edições
+
+O Flavos OS 2.0 será organizado em um núcleo comum e múltiplas edições:
+
+```txt
+[ Flavos OS 2.0 ]
+        │
+        ▼
+[ Flavos OS Core ]
+        │
+        ├── Cloud Edition
+        ├── Desktop Edition
+        └── Legacy Edition
+```
+
+O Flavos OS Core é compartilhado por todas as edições.
+
+A Cloud Edition é headless.
+A Desktop Edition será visual e voltada para uso pessoal.
+A Legacy Edition será visual, leve e voltada para computadores antigos.
 
 ---
 
@@ -131,15 +169,16 @@ Void Linux
 
 ## Decisões
 
-| Área               | Escolha         |
-| ------------------ | --------------- |
-| Init               | runit           |
-| libc               | glibc           |
-| Pacotes            | xbps            |
-| Interface gráfica  | Nenhuma         |
-| Modo               | Headless        |
-| Acesso inicial     | SSH             |
-| Controle principal | API + Dashboard |
+| Área | Cloud Edition | Desktop Edition | Legacy Edition |
+|---|---|---|---|
+| Interface gráfica | Nenhuma | KDE/GNOME | XFCE/LXQt |
+| Modo | Headless | Desktop | Desktop leve |
+| Uso | VPS/Servidor | Uso pessoal | PC antigo |
+| Init | runit | runit | runit |
+| libc | glibc | glibc | glibc |
+| Pacotes | xbps | xbps | xbps |
+| Acesso inicial | SSH | Local / Login | Local / Login |
+| Controle principal | API + Dashboard | Local + API + Dashboard | Local + API + Dashboard |
 
 ---
 
@@ -1233,7 +1272,13 @@ Após a Preview 0.1:
 * Flavos Cloud Sync;
 * marketplace de serviços;
 * modo cluster;
-* integração com Flavos ONE.
+* integração com Flavos ONE;
+* Flavos OS 2.0 Desktop Edition;
+* Flavos OS 2.0 Legacy Edition;
+* instalador por perfis;
+* ISO por edição;
+* tema KDE/GNOME Flavos;
+* tema XFCE/LXQt Flavos;
 
 ---
 
@@ -1267,6 +1312,30 @@ Após a Preview 0.1:
 * limpo;
 * confiável;
 * sem exagero visual.
+
+## Identidade por edição
+
+### Cloud Edition
+- visual principal via Web Console;
+- terminal limpo;
+- banner SSH;
+- página local do nginx;
+- foco em servidor.
+
+### Desktop Edition
+- ambiente gráfico moderno;
+- KDE/GNOME;
+- tema Flavos;
+- wallpaper oficial;
+- login manager customizado;
+- atalho para Web Console.
+
+### Legacy Edition
+- XFCE/LXQt;
+- tema Flavos leve;
+- poucos efeitos;
+- baixo consumo;
+- foco em hardware antigo.
 
 ---
 
@@ -1321,10 +1390,11 @@ O Flavos OS 2.0 representa o renascimento do projeto Flavos OS, agora com uma pr
 A versão 0.1 serviu como laboratório.
 A versão 2.0 nasce como produto técnico de portfólio.
 
-O objetivo não é criar apenas mais uma distribuição Linux, mas sim uma experiência própria de controle de nuvem:
+O objetivo não é criar apenas mais uma distribuição Linux, mas sim uma experiência própria de controle modular do sistema operacional:
 
-> Uma VPS comum por baixo.
-> Um sistema Flavos por cima.
+> Void Linux por baixo.
+> Flavos OS Core no centro.
+> Cloud, Desktop e Legacy como edições.
 
 O Flavos OS 2.0 deve ser simples no começo, seguro por padrão e evolutivo por arquitetura.
 

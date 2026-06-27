@@ -4,6 +4,21 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.5.5] — Fase 5.5: Arquitetura por Edições — 27/06/2026
+
+### Adicionado
+- Arquivo `docs/EDITIONS.md` — Formalização das três edições oficiais (Cloud, Desktop e Legacy) e do núcleo comum Flavos OS Core.
+- Perfil de pacotes e instalações segmentadas em `docs/INSTALL.md` para cada edição.
+- Detalhamento de vetores de ataque específicos e mitigação local por edição em `docs/SECURITY.md`.
+
+### Modificado
+- `README.md` — Visão unificada do Flavos OS 2.0 e nova seção descrevendo as edições suportadas.
+- `Documentação.md` — Reformulação da visão do projeto para remover a dependência de arquitetura puramente headless em nuvem e documentação da modularidade das edições baseadas no núcleo comum.
+- `docs/ARCHITECTURE.md` — Introdução da seção "Arquitetura por Edições" demonstrando o compartilhamento do Flavos OS Core.
+- `docs/ROADMAP.md` — Alinhamento dos status das fases concluídas e inclusão das fases 5.5, D1 (Desktop Edition Prototype) e L1 (Legacy Edition Prototype).
+
+---
+
 ## [0.5.0] — Fase 5: Service Manager — 27/06/2026
 
 ### Adicionado

@@ -36,6 +36,41 @@ graph TD
 
 ---
 
+## 1.1 Arquitetura por Edições
+
+O Flavos OS 2.0 é dividido em um núcleo comum (Flavos OS Core) e perfis de instalação específicos (Edições):
+
+```txt
+Flavos OS Core
+├── Cloud Edition
+├── Desktop Edition
+└── Legacy Edition
+```
+
+### Flavos OS Core
+Esta é a camada comum obrigatória presente em todas as edições, garantindo a padronização das APIs e do controle:
+* Void Linux Base (sistema hospedeiro)
+* runit (sistema de inicialização nativo)
+* xbps (gerenciamento e integridade do sistema)
+* Flavos Core Agent (daemon em Go)
+* API REST local (`127.0.0.1:8087`)
+* Autenticação estática via `X-Flavos-Token`
+* Service Manager (controle restrito por whitelist e políticas)
+* Telemetria (mecanismo de medição de CPU, RAM e disco)
+* Logs e auditoria (registro local de eventos de segurança)
+* Web Console (base de integração de painéis)
+
+### Cloud Edition
+Perfil headless/server otimizado para servidores em nuvem, VPS e ambientes de laboratório de infraestrutura. Não possui interface gráfica e foca em desempenho e automação via API.
+
+### Desktop Edition
+Perfil visual voltado para computadores de uso pessoal. Adiciona uma interface gráfica moderna (inicialmente priorizando KDE Plasma ou GNOME), identidade visual unificada com wallpapers oficiais, login manager customizado e atalhos para o console local.
+
+### Legacy Edition
+Perfil leve com interface gráfica de baixo consumo (como XFCE, LXQt ou Openbox) projetado para rodar em computadores antigos ou com hardware extremamente limitado, mantendo o controle total da API local e a leveza.
+
+---
+
 ## 2. Camadas do Sistema
 
 ### Camada 1: Void Linux Base (Host)

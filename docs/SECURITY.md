@@ -67,6 +67,35 @@ O Service Manager foi projetado com as seguintes garantias de segurança:
 
 ---
 
+## 🛡️ Segurança por Edição
+
+A superfície de ataque e as ameaças variam de acordo com o perfil de instalação. Por essa razão, o Flavos OS 2.0 define políticas específicas de segurança e isolamento para cada edição:
+
+### 1. Cloud Edition (Headless / VPS)
+* **Superfície de Ataque:** Focada em conexões de rede externas e automações da API.
+* **Modelo de Ameaça:** Acesso remoto não autorizado a endpoints administrativos e tentativas de bypass do proxy reverso.
+* **Medidas de Mitigação:**
+  * Bind estrito do Agent a `127.0.0.1`.
+  * Bloqueio total de portas de API no firewall (`ufw`/`iptables`) voltado para a internet.
+  * Autenticação mútua TLS obrigatória se a API for exposta via Nginx.
+
+### 2. Desktop Edition (Workstation Gráfica)
+* **Superfície de Ataque:** Focada em ataques de origem local. Vários aplicativos de usuário comum rodando em paralelo com a interface gráfica.
+* **Modelo de Ameaça:** Um aplicativo malicioso ou script local não autenticado rodando com privilégios de usuário comum (`kaua`, por exemplo) tentando ler o token de acesso ou fazer requests na porta local `8087` para interromper serviços críticos (como desabilitar segurança ou parar o Agent).
+* **Medidas de Mitigação:**
+  * O token local em `/etc/flavos/token` é mantido sob `chmod 600` e dono `root:root`. Nenhum processo de usuário comum consegue lê-lo.
+  * O Agent exige o token de cabeçalho `X-Flavos-Token` mesmo para requisições originadas do mesmo computador.
+  * Os utilitários e atalhos da interface gráfica do Flavos (Web Console executado localmente) devem utilizar mecanismos de keychain do sistema ou armazenamento seguro em disco com privilégios adequados para resguardar a credencial.
+
+### 3. Legacy Edition (Interface Leve)
+* **Superfície de Ataque:** Similar à Desktop Edition, porém sob sistemas potencialmente desatualizados ou com recursos de isolamento de memória e processamento reduzidos.
+* **Modelo de Ameaça:** Vazamento de tokens por memória de aplicativos leves ou hijacking de rotas internas.
+* **Medidas de Mitigação:**
+  * Aplicação do mesmo modelo de validação por token estático criptográfico em tempo constante.
+  * Restrição de permissões de auditoria. O arquivo `/var/log/flavos/audit.log` possui permissões estritas para evitar leitura por outros aplicativos locais leves.
+
+---
+
 ## 🛡️ Vetores de Ataque Mitigados
 
 

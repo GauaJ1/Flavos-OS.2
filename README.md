@@ -1,18 +1,48 @@
-# Flavos OS 2.0 — Cloud Edition
+# Flavos OS 2.0
 
 [![Status](https://img.shields.io/badge/Status-Iniciando-blue.svg)](#)
 [![License](https://img.shields.io/badge/License-A%20definir-lightgrey.svg)](#)
 [![Target](https://img.shields.io/badge/Target-Void%20Linux%20x86__64%20glibc-green.svg)](#)
 
-> "Flavos OS 2.0 é um Cloud OS headless baseado em Void Linux, projetado para transformar uma VPS em um ambiente privado, controlável por API, painel web e automações inteligentes."
+> "Flavos OS 2.0 é um sistema baseado em Void Linux com um núcleo comum chamado Flavos OS Core, projetado para rodar em perfis cloud, desktop e legacy, mantendo uma camada unificada de controle via API e console."
 
 ---
 
 ## 📌 Visão Geral & Objetivo
 
-O **Flavos OS 2.0** é o renascimento do descontinuado *Flavos OS 0.1 Preview*. Nesta nova encarnação, o projeto abandona a proposta de um Desktop OS tradicional para focar em uma solução de **Cloud OS Headless**. 
+O **Flavos OS 2.0** é o renascimento do descontinuado *Flavos OS 0.1 Preview*. Nesta nova encarnação, o projeto é estruturado em torno de um núcleo modular chamado **Flavos OS Core**, que gerencia o sistema base e expõe APIs seguras para controle remoto.
 
-O objetivo é transformar uma VPS Linux comum em um servidor de infraestrutura privada altamente controlável, oferecendo telemetria, logs de auditoria, API REST de gerenciamento de serviços e comunicação em tempo real via WebSockets. Ele age como uma camada de gerenciamento unificada diretamente sobre o sistema operacional hospedeiro.
+A primeira edição e foco principal atual do projeto é a **Cloud Edition** (Headless), voltada para transformar uma VPS Linux comum em um servidor de infraestrutura privada altamente controlável, oferecendo telemetria, logs de auditoria, API REST de gerenciamento de serviços e comunicação em tempo real. Futuramente, o mesmo núcleo será adaptado em edições gráficas (Desktop e Legacy) para uso pessoal e hardware antigo.
+
+---
+
+## 💻 Edições do Flavos OS 2.0
+
+O Flavos OS 2.0 é organizado em torno de um núcleo comum chamado **Flavos OS Core**.
+
+Esse Core roda em todas as edições e inclui:
+
+- Void Linux Base;
+- runit;
+- xbps;
+- Flavos Core Agent;
+- API local;
+- autenticação;
+- Service Manager;
+- integração futura com o Web Console.
+
+As edições previstas são:
+
+| Edição | Uso | Interface | Status |
+|---|---|---|---|
+| Cloud Edition | VPS, servidores e cloud | Headless | Em desenvolvimento |
+| Desktop Edition | Uso pessoal | KDE/GNOME | Planejada |
+| Legacy Edition | PCs antigos | XFCE/LXQt | Planejada |
+
+A Cloud Edition é o foco atual, mas Desktop e Legacy reutilizarão o mesmo Flavos OS Core.
+
+Para detalhes, consulte [docs/EDITIONS.md](docs/EDITIONS.md).
+
 
 ---
 
