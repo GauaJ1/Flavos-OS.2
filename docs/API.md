@@ -4,6 +4,7 @@ Esta é a documentação inicial da API HTTP REST e do WebSocket do **Flavos Cor
 A API escuta por padrão na porta `8087` no endereço local (`127.0.0.1`) durante o desenvolvimento.
 
 Todas as requisições, exceto `/api/v1/health`, exigem autenticação via header `X-Flavos-Token`.
+
 ---
 
 ## 🔒 Autenticação
@@ -106,32 +107,31 @@ Coleta estatísticas instantâneas de uso do hardware no host.
 ---
 
 ### 4. `GET /api/v1/services`
-Lista os serviços monitorados que foram permitidos na whitelist de configuração do Agent.
+Lista os serviços na whitelist (`/etc/flavos/agent.toml`) com status real do runit e ações permitidas por serviço.
 
-- **Resposta (200 OK):**
+**Requer:** `X-Flavos-Token: <token>`
+
+- **Resposta (200 OK) — exemplo real da VM:**
   ```json
   {
     "services": [
       {
         "name": "nginx",
         "status": "running",
-        "pid": 1024,
-        "uptime_seconds": 86400,
-        "allowed": true
+        "raw": "run: /var/service/nginx: (pid 718) 120s",
+        "allowed_actions": ["status", "start", "stop", "restart"]
       },
       {
         "name": "sshd",
         "status": "running",
-        "pid": 982,
-        "uptime_seconds": 154300,
-        "allowed": true
+        "raw": "run: /var/service/sshd: (pid 494) 300s",
+        "allowed_actions": ["status", "restart"]
       },
       {
         "name": "flavos-agent",
         "status": "running",
-        "pid": 2500,
-        "uptime_seconds": 1200,
-        "allowed": true
+        "raw": "run: /var/service/flavos-agent: (pid 666) 90s",
+        "allowed_actions": ["status"]
       }
     ]
   }
@@ -139,12 +139,11 @@ Lista os serviços monitorados que foram permitidos na whitelist de configuraç�
 
 ---
 
-### 5. `POST /api/v1/services/{name}/start` | `stop` | `restart`
-Controla a execução dos serviços gerenciados pelo `runit`.
-O parâmetro `{name}` deve constar na whitelist, sob o risco de retornar erro HTTP 403 Forbidden.
+### 5. `POST /api/v1/services/{name}/start|stop|restart`
+Controla serviços gerenciados pelo `runit`. O nome deve estar na whitelist e a ação deve ser permitida para aquele serviço.
 
-- **Exemplo de Requisição (POST /api/v1/services/nginx/restart):**
-  *Sem corpo de payload.*
+**Requer:** `X-Flavos-Token: <token>`  
+**Sem corpo de payload.**
 
 - **Resposta (200 OK):**
   ```json
@@ -152,21 +151,26 @@ O parâmetro `{name}` deve constar na whitelist, sob o risco de retornar erro HT
     "service": "nginx",
     "action": "restart",
     "status": "success",
-    "message": "Service nginx restarted successfully",
-    "timestamp": "2026-06-25T12:01:30Z"
+    "message": "service action executed",
+    "output": "ok: run: /var/service/nginx: (pid 697) 0s",
+    "timestamp": "2026-06-27T00:19:24Z"
   }
   ```
 
-- **Resposta de Erro (403 Forbidden - Serviço Não Permitido):**
-  ```json
-  {
-    "error": "Forbidden",
-    "message": "Service 'postgresql' is not in the whitelist of allowed services",
-    "timestamp": "2026-06-25T12:02:00Z"
-  }
-  ```
+- **Erros possíveis:**
+
+| Código | Corpo | Causa |
+|---|---|---|
+| `400` | `{"error":"invalid_service_name"}` | Nome contém caracteres inválidos |
+| `400` | `{"error":"invalid_action"}` | Ação não reconhecida |
+| `401` | `{"error":"unauthorized"}` | Token ausente ou inválido |
+| `403` | `{"error":"service_not_allowed"}` | Serviço fora da whitelist |
+| `403` | `{"error":"action_not_allowed"}` | Ação não permitida para esse serviço |
+| `405` | `{"error":"method_not_allowed"}` | Método HTTP incorreto (não é POST) |
+| `500` | `{"error":"internal_error"}` | Falha ao executar o `sv` |
 
 ---
+
 
 ### 6. `GET /api/v1/logs/{service}`
 Recupera as últimas linhas de logs do serviço do runit (utilizando o diretório padrão `/var/log/sv/{service}/current` ou similar).

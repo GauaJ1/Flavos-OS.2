@@ -8,11 +8,11 @@ O `flavos-agent` é o núcleo do Flavos OS 2.0. É um servidor HTTP leve escrito
 agent/
 ├── cmd/
 │   └── flavos-agent/
-│       └── main.go           # Entrypoint — inicializa o servidor HTTP
+│       └── main.go              # Entrypoint — inicializa o servidor HTTP
 ├── internal/
 │   ├── api/
-│   │   ├── handlers.go       # Handlers dos endpoints REST
-│   │   └── router.go         # Roteamento das URLs
+│   │   ├── handlers.go          # Handlers dos endpoints REST
+│   │   └── router.go            # Roteamento das URLs
 │   ├── metrics/
 │   │   └── metrics.go        # Coleta de métricas do sistema
 │   └── system/
@@ -65,7 +65,7 @@ Requisições sem token ou com token inválido recebem:
 
 O endpoint `/api/v1/health` é **público** e não requer autenticação.
 
-## Endpoints disponíveis (v0.1.0 — Fase 4)
+## Endpoints disponíveis (v0.4.0 — Fase 4)
 
 | Método | Endpoint            | Descrição              | Auth? |
 |--------|---------------------|------------------------|-------|
@@ -75,7 +75,7 @@ O endpoint `/api/v1/health` é **público** e não requer autenticação.
 
 ## Segurança
 
-- Bind apenas em `127.0.0.1` — sem exposição pública.
+- Bind apenas em `[IP_ADDRESS]` — sem exposição pública.
 - Token lido de arquivo com `strings.TrimSpace` para eliminar `\n` indesejado.
 - Comparação de token via `crypto/subtle.ConstantTimeCompare` + `sha256.Sum256` — resistente a timing attacks.
 - Token jamais registrado em logs, código-fonte ou relatórios.
@@ -85,4 +85,3 @@ O endpoint `/api/v1/health` é **público** e não requer autenticação.
 
 **Fase 4 — Autenticação Inicial** concluída.  
 A Fase 5 adicionará controle de serviços runit via API autenticada.
-

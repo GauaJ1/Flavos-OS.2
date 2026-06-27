@@ -4,7 +4,30 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.5.0] — Fase 5: Service Manager — 27/06/2026
+
+### Adicionado
+- Pacote `agent/internal/config` — lê whitelist de serviços de `/etc/flavos/agent.toml` (stdlib only).
+- Pacote `agent/internal/services` — Service Manager com whitelist, política de ações por serviço e execução via `/usr/bin/sv` com timeout de 5 segundos.
+- Endpoint autenticado `GET /api/v1/services` — lista serviços com status real do runit e ações permitidas.
+- Endpoint autenticado `POST /api/v1/services/{name}/start` — inicia serviço da whitelist.
+- Endpoint autenticado `POST /api/v1/services/{name}/stop` — para serviço da whitelist.
+- Endpoint autenticado `POST /api/v1/services/{name}/restart` — reinicia serviço da whitelist.
+
+### Segurança
+- Validação de nome de serviço via regex `^[a-zA-Z0-9._-]+$` → `400 invalid_service_name`.
+- Serviços fora da whitelist → `403 service_not_allowed`.
+- Ações não permitidas por serviço → `403 action_not_allowed`.
+- Método HTTP incorreto → `405 method_not_allowed`.
+- Sem shell livre: execução exclusivamente via `exec.CommandContext`.
+- `sshd/stop` bloqueado para preservar acesso SSH.
+- `flavos-agent/stop` e `flavos-agent/restart` bloqueados (não mata a si próprio).
+- Whitelist vazia se `agent.toml` não existir (fail-closed).
+
+---
+
 ## [0.4.0] — Fase 4: Autenticação Inicial do Flavos Core Agent — 27/06/2026
+
 
 ### Adicionado
 - **Módulo de Autenticação (`agent/internal/auth`):**

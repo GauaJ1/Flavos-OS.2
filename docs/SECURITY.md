@@ -49,7 +49,26 @@ Toda e qualquer requisição que altere o estado do sistema (como `/api/v1/servi
 
 ---
 
+## 🔧 Service Manager Security Model (Fase 5)
+
+O Service Manager foi projetado com as seguintes garantias de segurança:
+
+- **Whitelist obrigatória:** Apenas serviços explicitamente listados em `/etc/flavos/agent.toml` (`[services] allowed = [...]`) podem ser controlados. Serviços fora da lista recebem `403 service_not_allowed`.
+- **Validação de nomes:** O parâmetro `{name}` é validado via regex `^[a-zA-Z0-9._-]+$` antes de qualquer operação. Nomes com `..`, `/`, `;`, `|`, `$`, espaços ou outros caracteres especiais recebem `400 invalid_service_name`.
+- **Política de ações por serviço:** Cada serviço tem um conjunto explícito de ações permitidas. Ações não autorizadas recebem `403 action_not_allowed`.
+  - `nginx`: status, start, stop, restart
+  - `sshd`: status, restart (stop bloqueado — preserva acesso SSH)
+  - `flavos-agent`: status apenas (não pode matar a si próprio)
+- **Sem shell livre:** Toda execução usa `exec.CommandContext(ctx, "/usr/bin/sv", action, "/var/service/"+name)` — nenhum argumento é passado para um interpretador shell.
+- **Timeout obrigatório:** Cada chamada ao `sv` tem timeout de 5 segundos via `context.WithTimeout`.
+- **Autenticação obrigatória:** Todos os endpoints de controle exigem `X-Flavos-Token` válido.
+- **Bind local:** O Agent continua em `127.0.0.1:8087` — sem exposição pública.
+- **Fail-closed:** Se `agent.toml` não existir ou não puder ser lido, a whitelist é vazia e nenhum serviço é controlável.
+
+---
+
 ## 🛡️ Vetores de Ataque Mitigados
+
 
 | Vetor de Ataque | Mitigação no Flavos OS 2.0 |
 | :--- | :--- |
