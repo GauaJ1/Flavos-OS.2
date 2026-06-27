@@ -71,7 +71,7 @@ Ela mantém o Flavos OS Core, mas adiciona um ambiente gráfico moderno, aplicat
 * API local de controle disponível
 * Experiência voltada para uso pessoal e computação de desktop
 
-**Status atual:** Planejada.
+**Status atual:** Protótipo funcional validado (Fase D1 — Desktop Edition Prototype).
 
 ---
 
@@ -108,7 +108,7 @@ Ela também mantém o Flavos OS Core, mas usa um ambiente gráfico leve e menos 
 | Consumo | Muito baixo | Médio/alto | Baixo |
 | Web Console | Sim | Sim | Sim |
 | Agent local | Sim | Sim | Sim |
-| Status | Em desenvolvimento | Planejada | Planejada |
+| Status | Em desenvolvimento | Protótipo validado | Planejada |
 
 ---
 

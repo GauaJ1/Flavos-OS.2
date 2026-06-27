@@ -80,12 +80,13 @@ A superfície de ataque e as ameaças variam de acordo com o perfil de instalaç
   * Autenticação mútua TLS obrigatória se a API for exposta via Nginx.
 
 ### 2. Desktop Edition (Workstation Gráfica)
-* **Superfície de Ataque:** Focada em ataques de origem local. Vários aplicativos de usuário comum rodando em paralelo com a interface gráfica.
-* **Modelo de Ameaça:** Um aplicativo malicioso ou script local não autenticado rodando com privilégios de usuário comum (`kaua`, por exemplo) tentando ler o token de acesso ou fazer requests na porta local `8087` para interromper serviços críticos (como desabilitar segurança ou parar o Agent).
-* **Medidas de Mitigação:**
-  * O token local em `/etc/flavos/token` é mantido sob `chmod 600` e dono `root:root`. Nenhum processo de usuário comum consegue lê-lo.
-  * O Agent exige o token de cabeçalho `X-Flavos-Token` mesmo para requisições originadas do mesmo computador.
-  * Os utilitários e atalhos da interface gráfica do Flavos (Web Console executado localmente) devem utilizar mecanismos de keychain do sistema ou armazenamento seguro em disco com privilégios adequados para resguardar a credencial.
+* **Superfície de Ataque:** Focada em ataques de origem local e vazamentos de identidade entre ambientes clonados. Aplicativos locais rodando sob o usuário comum (`kaua`, por exemplo) podem tentar ler o token ou interceptar mensagens D-Bus.
+* **Modelo de Ameaça:** Um aplicativo malicioso ou script local não autenticado rodando com privilégios de usuário comum tentando ler o token de acesso, escutar barramentos D-Bus internos compartilhados ou fazer requests na porta local `8087` para interromper serviços críticos.
+* **Medidas de Mitigação Implementadas na D1:**
+  * **Isolamento de Identidade D-Bus e Rede**: Cada clone da máquina virtual Desktop gera um novo UUID único para `/etc/machine-id` e `/var/lib/dbus/machine-id` usando `uuidgen | tr -d '-'`. Isso garante que o barramento de mensagens D-Bus local e o subsistema `elogind` permaneçam criptográfica e logicamente isolados entre edições/instâncias, mitigando ataques de personificação.
+  * **Token Local de Alta Entropia**: O token de autenticação em `/etc/flavos/token` é gerado individualmente por VM com permissões `600` (`root:root`). Nenhum processo de usuário comum (`kaua`) consegue lê-lo diretamente do disco.
+  * **Bind em Loopback Seguro**: O Flavos Core Agent faz bind apenas em `127.0.0.1:8087`, impedindo exposição de rede externa para a porta da API direta.
+  * **Proxy Reverso Nginx**: O Nginx gerencia o acesso ao Web Console local e expõe rotas `/api/v1/` que requerem explicitamente a validação do cabeçalho `X-Flavos-Token` no Agent. O console estático é acessível na porta `80`, mas todas as rotas administrativas privadas continuam exigindo o token restrito ao root.
 
 ### 3. Legacy Edition (Interface Leve)
 * **Superfície de Ataque:** Similar à Desktop Edition, porém sob sistemas potencialmente desatualizados ou com recursos de isolamento de memória e processamento reduzidos.

@@ -64,14 +64,31 @@ Adiciona serviços de rede, proxy e servidores web para controle remoto e automa
 
 ### 3. Desktop Edition (Perfil Workstation)
 Instala uma interface gráfica de usuário completa e moderna, juntamente com utilitários de sistema e suporte a desktops pessoais:
-* **Display Server & Login Manager:** `xorg-server`, `lightdm`, `lightdm-gtk3-greeter` (gerenciador de login).
-* **Interface Gráfica (DE):** `plasma-desktop` (KDE Plasma) ou `gnome` / `gnome-shell`.
+* **Display Server & Login Manager:** `xorg` (servidor X11 completo), `sddm` (gerenciador de login oficial do KDE).
+* **Interface Gráfica (DE):** `kde-plasma` (KDE Plasma completo) e `kde-baseapps` (aplicativos padrão).
 * **Navegador Web:** `firefox` (para acesso local ao Web Console e uso pessoal).
-* **Utilitários:** `kitty` ou `konsole` (emuladores de terminal modernos), `dbus`, `elogind` (gestão de assento e energia).
-* **Comando de instalação (KDE Plasma):**
+* **Utilitários:** `konsole` (terminal), `dbus`, `elogind` (gestão de assento e energia).
+* **Drivers Virtuais (VM):** `xf86-video-qxl` (aceleração para SPICE/QEMU).
+* **Comando de instalação:**
   ```bash
-  sudo xbps-install -y go git curl wget nano htop xorg-server lightdm lightdm-gtk3-greeter plasma-desktop dbus elogind firefox konsole
+  sudo xbps-install -y xorg kde-plasma kde-baseapps sddm dbus elogind firefox xf86-video-qxl
   ```
+
+#### Ativação dos Serviços Runit (Ordem Idempotente)
+Para inicialização correta da sessão gráfica sem systemd no Void Linux:
+```bash
+sudo ln -sf /etc/sv/dbus /var/service/
+sudo ln -sf /etc/sv/elogind /var/service/
+sudo ln -sf /etc/sv/sddm /var/service/
+```
+
+#### Configuração de Autologin (SDDM)
+Crie o arquivo `/etc/sddm.conf.d/autologin.conf`:
+```ini
+[Autologin]
+User=kaua
+Session=plasmax11
+```
 
 ### 4. Legacy Edition (Perfil Lightweight/Retro)
 Projetado para hardware antigo, maximizando o desempenho por meio de uma interface gráfica extremamente leve:

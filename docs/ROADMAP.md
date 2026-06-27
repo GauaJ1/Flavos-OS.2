@@ -75,10 +75,10 @@ Fase 10 <── Fase 9 <── Fase 8 <── Fase 7 <── Fase 6 <───�
 ---
 
 ### Fase D1 — Protótipo Desktop Edition (Desktop Edition Prototype)
-- **Objetivo:** Criar a fundação e especificação prática para a edição gráfica voltada para computadores pessoais.
-- **Entregáveis:** Scripts de deploy de pacotes gráficos essenciais do Void Linux (X11, KDE Plasma/GNOME, LightDM), definição de wallpapers oficiais, arquivos de atalhos e configuração de login manager integrado.
-- **Critério de Conclusão:** Script de automação instalando a interface de forma funcional e aplicando o tema de identidade do Flavos OS.
-- **Status Atual:** `🔴 Não Iniciado`
+- **Objetivo:** Criar a fundação e validação prática para a edição gráfica voltada para computadores pessoais.
+- **Entregáveis:** VM isolada (`flavos-desktop-lab`) com servidor gráfico Xorg, ambiente KDE Plasma 6, gerenciador de login SDDM com autologin configurado no usuário comum, e atalho de desktop integrado para acesso ao Web Console local rodando sobre Nginx e o Flavos Core Agent.
+- **Critério de Conclusão:** VM inicializada e carregando o ambiente KDE Plasma automaticamente em sessão X11 funcional com o Flavos Core Agent e Nginx executando localmente e atalho de console funcional.
+- **Status Atual:** `🟢 Concluído`
 
 ---
 

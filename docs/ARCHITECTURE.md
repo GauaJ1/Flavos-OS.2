@@ -6,32 +6,47 @@ Este documento descreve a arquitetura do **Flavos OS 2.0 (Cloud Edition)**, defi
 
 ## 1. Visão Geral da Arquitetura
 
-O Flavos OS 2.0 é projetado como uma solução **Headless** (sem interface gráfica local), voltada para servidores em nuvem (VPS). Ele atua como um agente de orquestração e monitoramento de sistema, permitindo o controle de uma máquina Void Linux de forma remota e segura via APIs modernas e um painel Web centralizado.
+O Flavos OS 2.0 é projetado de forma modular, composto pelo **Flavos OS Core** (núcleo comum) e perfis específicos (Cloud Edition e Desktop Edition). O Core atua como um agente de orquestração e monitoramento de sistema, permitindo o controle de uma máquina Void Linux de forma segura via APIs modernas e um painel Web (Web Console).
 
-A arquitetura adota um design desacoplado em três camadas:
+### Cloud Edition (Acesso Remoto/Headless)
+O Web Console reside em um cliente remoto que se comunica com o Agent através da rede externa via HTTPS/WSS (passando pelo proxy reverso Nginx).
+
+### Desktop Edition (Acesso Local/Workstation)
+O Web Console é implantado localmente no host e acessado pelo navegador local (Firefox) via endereço de loopback (`127.0.0.1:80`), interagindo de forma direta e segura com o Agent local. A interface de desktop é gerenciada pelo KDE Plasma rodando sobre Xorg e SDDM.
 
 ```mermaid
 graph TD
-    subgraph Client Layer
-        Dashboard["Flavos Web Console (React / Vite)"]
+    subgraph Client Layer (Cloud / Remote)
+        DashboardRemote["Flavos Web Console (Remote Browser)"]
     end
 
-    subgraph Server Layer
-        Agent["Flavos Core Agent (Golang)"]
+    subgraph Desktop Layer (Local VM / User Space)
+        KDE["KDE Plasma 6 + SDDM"]
+        FirefoxLocal["Firefox Local Browser"]
+        DesktopShortcut["Console Desktop Shortcut"]
+    end
+
+    subgraph Server Layer (Flavos Core Host)
+        Nginx["Nginx Reverse Proxy (Port 80)"]
+        Agent["Flavos Core Agent (Golang - Port 8087)"]
         SQLite[("Auditoria / Estado (SQLite)")]
     end
 
-    subgraph OS Layer
+    subgraph OS Layer (Void Linux System)
         Runit["Init System (runit)"]
-        XBPS["Package Manager (xbps)"]
+        DBus["D-Bus & Elogind Session"]
         Proc["/proc & System APIs"]
     end
 
-    Dashboard <-->|HTTPS / WSS (Auth Token)| Agent
+    DashboardRemote <-->|HTTPS/WSS via WAN| Nginx
+    DesktopShortcut -->|Launch| FirefoxLocal
+    FirefoxLocal <-->|HTTP/WS via Loopback| Nginx
+    Nginx <-->|Proxy Pass /api/v1/| Agent
     Agent <-->|Read / Write| SQLite
     Agent <-->|Control Services| Runit
-    Agent <-->|Query State| XBPS
     Agent <-->|Syscalls / Telemetry| Proc
+    KDE <-->|Session Control| DBus
+    Runit <-->|Manage Daemons| DBus
 ```
 
 ---

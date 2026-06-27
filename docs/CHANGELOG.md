@@ -4,6 +4,24 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo seg
 
 ---
 
+## [0.8.0] — Fase D1: Protótipo Desktop Edition — 27/06/2026
+
+### Adicionado
+- VM isolada para testes locais e desenvolvimento de desktop: `flavos-desktop-lab` (IP `192.168.122.82`), clonada de forma segura com `virt-clone`.
+- Servidor gráfico completo `xorg`, ambiente `kde-plasma` (KDE Plasma 6) e `kde-baseapps` (aplicativos básicos) instalados no Void Linux.
+- Gerenciador de login SDDM habilitado como serviço runit sob elogind e dbus, configurado com autologin na sessão X11 `plasmax11` para o usuário comum `kaua`.
+- Novo identificador exclusivo para D-Bus e sistema (`/etc/machine-id` e `/var/lib/dbus/machine-id`) regenerado a partir de UUID único, evitando conflitos de rede e integridade.
+- Token estático criptográfico gerado de forma independente para a VM Desktop em `/etc/flavos/token` com permissão restrita `600`.
+- Nginx servindo o Web Console com tema Ant Design Premium (Fase 7.1) na porta `80`, fazendo proxy reverso local `/api/` para o Agent local (`127.0.0.1:8087`).
+- Atalho do Web Console na área de trabalho em `/home/kaua/Desktop/Flavos Web Console.desktop` com permissão de execução, permitindo ao usuário abrir a interface administrativa com um clique duplo no Firefox.
+
+### Segurança
+- Isolamento completo de credenciais e identificadores da VM Desktop em relação à VM Cloud Edition.
+- Flavos Agent fazendo bind exclusivamente em localhost (`127.0.0.1:8087`), com rotas administrativas privadas blindadas por autenticação de token.
+- Logs de auditoria locais e permissões restritas mantidas no diretório `/var/log/flavos/` para auditoria do host de desktop.
+
+---
+
 ## [0.7.0] — Fase 7: Flavos Web Console MVP — 27/06/2026
 
 ### Adicionado

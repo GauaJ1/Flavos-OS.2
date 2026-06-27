@@ -36,7 +36,7 @@ As edições previstas são:
 | Edição | Uso | Interface | Status |
 |---|---|---|---|
 | Cloud Edition | VPS, servidores e cloud | Headless | Em desenvolvimento |
-| Desktop Edition | Uso pessoal | KDE/GNOME | Planejada |
+| Desktop Edition | Uso pessoal | KDE/GNOME | Protótipo validado (D1) |
 | Legacy Edition | PCs antigos | XFCE/LXQt | Planejada |
 
 A Cloud Edition é o foco atual, mas Desktop e Legacy reutilizarão o mesmo Flavos OS Core.
@@ -82,11 +82,14 @@ Para detalhes completos da arquitetura, consulte [docs/ARCHITECTURE.md](docs/ARC
 - **Fase 1:** Criação do Ambiente de Desenvolvimento (Void Linux + QEMU/KVM) 🟢
 - **Fase 2:** Desenvolvimento do Flavos Core Agent MVP (Go, Healthcheck, endpoints iniciais) 🟢
 - **Fase 3:** Integração do Agent como serviço nativo do `runit` 🟢
-- **Fase 4:** Desenvolvimento do Service Manager (Start, Stop, Restart via API) 🟢
-- **Fase 5:** Coleta de Logs e Auditoria (Audit Log gravado localmente) 🟢
-- **Fase 6:** Autenticação e Segurança (Token de acesso estático na API) 🟢
+- **Fase 4:** Autenticação Inicial (Token de acesso estático na API) 🟢
+- **Fase 5:** Desenvolvimento do Service Manager (Start, Stop, Restart via API) 🟢
+- **Fase 5.5:** Arquitetura por Edições (Cloud, Desktop, Legacy) 🟢
+- **Fase D1:** Protótipo Desktop Edition (KDE Plasma, SDDM, Web Console local) 🟢
+- **Fase L1:** Protótipo Legacy Edition (XFCE, LXQt, Openbox leve) 🔴
+- **Fase 6:** Coleta de Logs e Auditoria (Audit Log gravado localmente) 🟢
 - **Fase 7:** Desenvolvimento do Flavos Web Console MVP (Dashboard React) 🟢
-- **Fase 8:** Telemetria em tempo real via WebSocket (CPU, RAM, Rede) 🟡 *[Atual]*
+- **Fase 8:** Telemetria em tempo real via WebSocket (CPU, RAM, Rede) 🔴
 - **Fase 9:** Hardening e Empacotamento (.xbps ou binários estáticos) 🔴
 - **Fase 10:** Lançamento da Preview 0.1 Final 🔴
 
